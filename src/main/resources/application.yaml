@@ -18,11 +18,11 @@ spring:
     name: PRODUCT-SERVICE
   config:
     import: configserver:http://${CONFIG_SERVER_URL:localhost}:9296
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://dev-nnxp3ymqgxzv0l4s.us.auth0.com/
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://dev-nnxp3ymqgxzv0l4s.us.auth0.com/
 
 #eureka:
 #  instance:

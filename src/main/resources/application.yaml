@@ -18,6 +18,22 @@ spring:
     name: PRODUCT-SERVICE
   config:
     import: configserver:http://${CONFIG_SERVER_URL:localhost}:9296
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0 # trace 100% of requests (important for testing)
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans # send spans to Zipkin
+
+logging:
+  level:
+    io.micrometer.tracing: DEBUG
+    io.zipkin.reporter2: DEBUG
+
+  pattern:
+    level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
 #  security:
 #    oauth2:
 #      resourceserver:

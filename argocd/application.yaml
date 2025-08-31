@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: product-service
   namespace: argocd
-  annotations:
-    argocd-image-updater.argoproj.io/image-list: "product-service-app=saitej150/productservice"
 spec:
   project: default
   source:
@@ -13,7 +11,7 @@ spec:
     path: k8s
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: product-service
+    namespace: ms-initial-setup
   syncPolicy:
     automated:
       prune: true

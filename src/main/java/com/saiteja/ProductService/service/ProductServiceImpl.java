@@ -1,10 +1,12 @@
 package com.saiteja.ProductService.service;
 
 import com.saiteja.ProductService.entity.Product;
+import com.saiteja.ProductService.entity.ProductDocument;
 import com.saiteja.ProductService.exception.ProductServiceCustomException;
 import com.saiteja.ProductService.model.ProductRequest;
 import com.saiteja.ProductService.model.ProductResponse;
 import com.saiteja.ProductService.repository.ProductRepository;
+import com.saiteja.ProductService.repository.ProductSearchRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,14 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    private ProductSearchRepository productSearchRepository;
+
     @Override
     public long addProduct(ProductRequest productRequest) {
         log.info("Adding Product..");
+
+        // Save product to MySQL
         Product product = Product.builder()
                 .productName(productRequest.getName())
                 .price(productRequest.getPrice())
@@ -27,6 +34,20 @@ public class ProductServiceImpl implements ProductService{
                 .build();
         log.info("Product Created..");
         productRepository.save(product);
+
+        try {
+            ProductDocument productDocument = ProductDocument.builder()
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .price(product.getPrice())
+                    .quantity(product.getQuantity())
+                    .build();
+
+            productSearchRepository.save(productDocument);
+            log.info("Product indexed in Elasticsearch: {}", productDocument);
+        } catch (Exception e) {
+            log.error("Failed to index product in Elasticsearch", e);
+        }
         return product.getProductId();
     }
 
@@ -53,5 +74,20 @@ public class ProductServiceImpl implements ProductService{
         product.setQuantity(product.getQuantity() - quantity);
         productRepository.save(product);
         log.info("Product Quantity updated successfully..");
+
+        // Update Elasticsearch
+        try {
+            ProductDocument productDocument = ProductDocument.builder()
+                    .productId(product.getProductId())
+                    .productName(product.getProductName())
+                    .price(product.getPrice())
+                    .quantity(product.getQuantity())
+                    .build();
+
+            productSearchRepository.save(productDocument);
+            log.info("Product quantity updated in Elasticsearch: {}", productDocument);
+        } catch (Exception e) {
+            log.error("Failed to update product in Elasticsearch", e);
+        }
     }
 }

@@ -19,6 +19,10 @@ spring:
   config:
     import: configserver:http://${CONFIG_SERVER_URL:localhost}:9296
 
+  elasticsearch:
+    uris: http://localhost:9200
+
+
 management:
   tracing:
     sampling:
@@ -35,11 +39,16 @@ management:
       enabled: true
 
 logging:
+  file:
+    name: ./logs/application.log
   level:
+    root: info
+    com.saiteja.ProductService: INFO
     io.micrometer.tracing: DEBUG
     io.zipkin.reporter2: DEBUG
 
   pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     level: "%5p [${spring.application.name:},traceId=%X{traceId:-},spanId=%X{spanId:-}]"
 #  security:
 #    oauth2:

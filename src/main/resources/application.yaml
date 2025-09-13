@@ -19,9 +19,6 @@ spring:
   config:
     import: configserver:http://${CONFIG_SERVER_URL:localhost}:9296
 
-  elasticsearch:
-    uris: http://localhost:9200
-
 
 management:
   tracing:
@@ -39,11 +36,8 @@ management:
       enabled: true
 
 logging:
-  file:
-    name: ./logs/application.log
   level:
     root: info
-    com.saiteja.ProductService: INFO
     io.micrometer.tracing: DEBUG
     io.zipkin.reporter2: DEBUG
 
